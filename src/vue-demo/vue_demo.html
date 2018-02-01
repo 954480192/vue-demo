@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vue  demo示例</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+
+    <div id="app">
+        {{ message }}
+    </div>
+
+    <hr>
+    <div id="app-2">
+      <span :title="message">
+        悬停！
+      </span>
+    </div>
+
+    <hr>
+    <div id="app-3">
+        <p>{{msg}}</p>
+        <input v-model.lazy="msg">
+    </div>
+
+    <hr>
+    <div id="app-4">
+        <ol>
+            <li-item v-for="li in list"
+                :item="li"
+                :key="li.id"
+            ></li-item>
+
+        </ol>
+        <button @click="warn('Form cannot be submitted yet.', $event)">
+            Submit
+        </button>
+        <button  @click.ctrl.exact="test">点击</button>
+    </div>
+
+    <hr>
+    <div v-if="Math.random() > 0.5">
+        Now you see me
+    </div>
+    <div v-else>
+        Now you don't
+    </div>
+
+    <hr>
+    <div id="app5">
+        <input type="checkbox" id="checkbox" v-model="checked">
+        <label for="checkbox">{{ checked }}</label>
+
+    </div>
+
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+
+        var app2 = new Vue({
+            el: '#app-2',
+            data: {
+                message: '页面加载于 ' + new Date().toLocaleString()
+            }
+        })
+
+        var app3 = new Vue({
+            el:"#app-3",
+            data:{
+                msg:"11"
+            }
+        })
+
+        Vue.component("li-item",{
+            props:['item'],
+            template:'<li>{{item.text}}</li>'
+        })
+
+        var app4 = new Vue({
+            el:"#app-4",
+            data:{
+               list:[
+                   {id:1,text:"ddd1"},
+                   {id:2,text:"ddd2"},
+                   {id:3,text:"ddd3"}
+               ]
+            },
+            methods: {
+                warn: function (message, event) {
+                    // 现在我们可以访问原生事件对象
+                    if (event) event.preventDefault()
+                    console.log(event.target);
+                    alert(message)
+                },
+                test:function () {
+                    alert("点击了");
+                }
+            }
+        })
+
+        var app5 = new Vue({
+            el:"#app5",
+            data:{
+                checked:""
+            }
+        })
+    </script>
+
+    <br>
+
+    <hr>
+    <h4>动态 Prop</h4>
+    <div id="props">
+        <input v-model="parentMsg">
+        <br>
+        <child v-bind:my-message="parentMsg"></child>
+    </div>
+
+    <br>
+
+    <hr>
+    <h4>自定义事件  向父组件传递数据</h4>
+
+    <div id="counter-event-example">
+        <p>{{ total }}</p>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+        <button-counter v-on:increment="incrementTotal"></button-counter>
+    </div>
+
+    <script>
+        Vue.component('child', {
+            // 在 JavaScript 中使用 camelCase
+            props: ['myMessage'],
+            template: '<span>{{ myMessage }}</span>'
+        })
+
+        var props = new Vue({
+            el:"#props",
+            data:{
+                parentMsg:""
+            }
+        })
+
+
+        Vue.component('button-counter', {
+            template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+            data: function () {
+                return {
+                    counter: 0
+                }
+            },
+            methods: {
+                incrementCounter: function () {
+                    this.counter += 1
+                    this.$emit('increment')
+                }
+            },
+        })
+
+        new Vue({
+            el: '#counter-event-example',
+            data: {
+                total: 0
+            },
+            methods: {
+                incrementTotal: function () {
+                    this.total += 1
+                }
+            }
+        })
+
+    </script>
+
+</body>
+</html>
